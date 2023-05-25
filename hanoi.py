@@ -6,7 +6,6 @@ class Game:
         self.meet_user()
         self.game_explanation()
         self.choose_difficulty()
-        self.required_moves = 2 ** self.difficulty - 1
 
         self.start_towers()
         
@@ -44,19 +43,20 @@ class Game:
             while not self.validate_yes_or_no_input(confirmation):
                 confirmation = input("Type [Y] to continue. ")
 
-
     def choose_difficulty(self):
         while True:
             try:
-                self.difficulty = int(input("Choose your difficulty level from 1 (easier) to 5 (harder).\nThis will be the total number of disks in the game. "))
-                if 1 <= self.difficulty <= 5:
+                self.difficulty = int(input("Choose your difficulty level from 1 (easier) to 3 (harder).\nThis will be the total number of disks in the game. "))
+                if 1 <= self.difficulty <= 3:
                     break
                 else:
-                    print("Please enter a number between 1 and 5.")
+                    print("Please enter a number between 1 and 3.")
             except ValueError:
-                print("Please enter a number between 1 and 5.")
+                print("Please enter a number between 1 and 3.")
         
-        print(f"The required number of moves to complete this level is {self.required_moves}.")
+        required_moves = 2 ** self.difficulty - 1
+
+        print(f"The required number of moves to complete this level is {required_moves}.")
         confirmation = input("If you're ready for this challenge, say [Yes] and we'll begin.\nIf you want to choose a different level, type anything else. ")
         if not self.validate_yes_or_no_input(confirmation):
             self.choose_difficulty()
@@ -75,8 +75,10 @@ class Game:
 class Tower:
     def __init__(self, number_of_disks=0):
         self.number_of_disks = number_of_disks
-        pass
-    
+        self.height = self.number_of_disks + 2
+        ...
+        
+
 
 
 def main():
