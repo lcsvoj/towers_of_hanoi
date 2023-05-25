@@ -75,7 +75,8 @@ class Game:
 class Tower:
     def __init__(self, number_of_disks=0):
         self.number_of_disks = number_of_disks
-        ...
+        pass
+    
 
 
 def main():
