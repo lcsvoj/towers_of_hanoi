@@ -1,3 +1,6 @@
+import draw_tower as draw
+
+
 class Game:
     def __init__(self):
         self.move_count = 0
@@ -7,11 +10,12 @@ class Game:
         self.game_explanation()
         self.choose_difficulty()
 
-        self.start_towers()
+        towers = self.start_towers()
+        print(self.draw_towers(towers))
         
         #TODO
-        self.get_move()
-        self.make_a_move()
+        #self.get_move()
+        #self.make_a_move()
 
 
     def validate_yes_or_no_input(self, answer):
@@ -39,25 +43,28 @@ class Game:
         introduction_content = [objective, rules, game_mechanism]
 
         for item in introduction_content:
-            confirmation = input(f"\n{item}\nType [Y] to continue. ")
+            confirmation = input(f"\n{item}\n\n[Type 'Y' to continue] ")
             while not self.validate_yes_or_no_input(confirmation):
-                confirmation = input("Type [Y] to continue. ")
+                confirmation = input("[Type 'Y' to continue] ")
+        print()
 
     def choose_difficulty(self):
+        min_level = 1
+        max_level = 3        
         while True:
             try:
-                self.difficulty = int(input("Choose your difficulty level from 1 (easier) to 3 (harder).\nThis will be the total number of disks in the game. "))
-                if 1 <= self.difficulty <= 3:
+                self.difficulty = int(input(f"\nChoose your difficulty level from {min_level} (easier) to {max_level} (harder).\nThis will be the total number of disks in the game. "))
+                if min_level <= self.difficulty <= max_level:
                     break
                 else:
-                    print("Please enter a number between 1 and 3.")
+                    print(f"Please enter a number between {min_level} and {max_level}.")
             except ValueError:
-                print("Please enter a number between 1 and 3.")
-        
+                print(f"Please enter a number between {min_level} and {max_level}.")
+        self.difficulty += 2
         required_moves = 2 ** self.difficulty - 1
 
-        print(f"The required number of moves to complete this level is {required_moves}.")
-        confirmation = input("If you're ready for this challenge, say [Yes] and we'll begin.\nIf you want to choose a different level, type anything else. ")
+        print(f"\nThe required number of moves to complete this level is {required_moves}.")
+        confirmation = input("If you're ready for this challenge, type 'Yes' and we'll begin.\nIf you want to choose a different level, type anything else. ")
         if not self.validate_yes_or_no_input(confirmation):
             self.choose_difficulty()
         else:
@@ -67,18 +74,34 @@ class Game:
         self.left_tower = Tower()
         self.right_tower = Tower()
         self.center_tower = Tower(self.difficulty)
-        self.print_towers()
+        towers = [self.left_tower, self.right_tower, self.center_tower]
+        return towers
 
-    def print_towers(self):
-        # TODO
+    def draw_towers(self, towers):
+        # Decompose each tower str line by line
+        all_towers_lines = []
+        for tower in towers:
+            all_towers_lines.append(tower.get_image().split("\n"))
         
+        # Recompose uniting the 3 towers into a single str
+        recomposed_towers = ""
+        for i in range(self.center_tower.height):
+            for tower in towers:
+                "".join(recomposed_towers, all_towers_lines[tower][i])
+            "".join(recomposed_towers, "\n")
+        
+        return recomposed_towers
+
 class Tower:
+    
     def __init__(self, number_of_disks=0):
         self.number_of_disks = number_of_disks
         self.height = self.number_of_disks + 2
-        ...
-        
+        self.image = "\n".join(draw.empty_level * self.height)
 
+    def get_image(self):
+        return self.image
+        
 
 
 def main():
