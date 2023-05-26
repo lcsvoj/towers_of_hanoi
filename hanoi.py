@@ -84,8 +84,8 @@ class Game:
             all_towers_lines.append(tower.get_image().split("\n"))
         
         # Recompose uniting the 3 towers into a single str
-        recomposed_towers = ""
-        for i in range(self.center_tower.height):
+        recomposed_towers = "\n"
+        for i in range(self.center_tower.height + 1):  # This range corresponds to the disk number + 2, +1 for the tower base
             for j in range(len(towers)):
                 recomposed_towers += all_towers_lines[j][i]
             recomposed_towers += "\n"
