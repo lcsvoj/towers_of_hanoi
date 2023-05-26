@@ -71,8 +71,8 @@ class Game:
             return
 
     def start_towers(self):
-        self.left_tower = Tower()
-        self.right_tower = Tower()
+        self.left_tower = Tower(self.difficulty)
+        self.right_tower = Tower(self.difficulty)
         self.center_tower = Tower(self.difficulty)
         towers = [self.left_tower, self.right_tower, self.center_tower]
         return towers
@@ -86,9 +86,9 @@ class Game:
         # Recompose uniting the 3 towers into a single str
         recomposed_towers = ""
         for i in range(self.center_tower.height):
-            for tower in towers:
-                "".join(recomposed_towers, all_towers_lines[tower][i])
-            "".join(recomposed_towers, "\n")
+            for j in range(len(towers)):
+                recomposed_towers += all_towers_lines[j][i]
+            recomposed_towers += "\n"
         
         return recomposed_towers
 
@@ -97,7 +97,7 @@ class Tower:
     def __init__(self, number_of_disks=0):
         self.number_of_disks = number_of_disks
         self.height = self.number_of_disks + 2
-        self.image = "\n".join(draw.empty_level * self.height)
+        self.image = (draw.empty_level + "\n") * self.height + draw.base_level
 
     def get_image(self):
         return self.image
