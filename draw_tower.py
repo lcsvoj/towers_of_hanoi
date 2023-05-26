@@ -1,29 +1,38 @@
-"""
+""" tower design:
 
            |           empty
-         (o|o)         xs
-        (oo|oo)        s
-       (ooo|ooo)       m
-      (oooo|oooo)      l
-     (ooooo|ooooo)     xl
+         (o|o)         
+        (oo|oo)        
+       (ooo|ooo)       
+      (oooo|oooo)      
+     (ooooo|ooooo)     
    [[[[[[[[|]]]]]]]]   base
 
 """
 
-empty_level = "           |           "
-xs_1_disk_level = "         (o|o)         "
-s_2_disk_level = "        (oo|oo)        "
-m_3_disk_level = "       (ooo|ooo)       "
-l_4_disk_level = "      (oooo|oooo)      "
-xl_5_disk_level = "     (ooooo|ooooo)     "
-base_level = "   [[[[[[[[|]]]]]]]]   "
+class TowerLevel:
+    levels = {
+        "disk_0": {"value": 0, "image": "           |           "},
+        "disk_1": {"value": 1, "image": "         (o|o)         "},
+        "disk_2": {"value": 2, "image": "        (oo|oo)        "}, 
+        "disk_3": {"value": 3, "image": "       (ooo|ooo)       "},
+        "disk_4": {"value": 4, "image": "      (oooo|oooo)      "},
+        "disk_5": {"value": 5, "image": "     (ooooo|ooooo)     "},
+        "base": {"value": None,"image": "   [[[[[[[[|]]]]]]]]   "},
+    }
 
-levels = [
-    empty_level,
-    xs_1_disk_level,
-    s_2_disk_level,
-    m_3_disk_level,
-    l_4_disk_level,
-    xl_5_disk_level,
-    base_level,
-]
+    def __init__(self, level_disk_value=0, is_base=False):
+        self.level_disk_value = level_disk_value
+        
+        if self.level_disk_value == 0:
+          self.is_empty = True
+
+        self.is_base = is_base
+        
+        if not self.is_base:
+           self.image = self.levels[f"disk_{self.level_disk_value}"]["image"]
+        else:
+           self.image = self.levels["base"]
+
+    def __str__(self):
+        return self.image
