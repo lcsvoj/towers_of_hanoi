@@ -122,7 +122,14 @@ class Tower:
         self.image += self.tower_base.image
 
     def remove_disk(self):
-        ...
+        if self.highest_disk_level.value == 0:
+            print("There are no disks in this tower, try another one.")
+            return
+        else:
+            disk_to_remove = self.highest_disk_level
+            self.editable_area[self.editable_area_size - 1] = self.empty_level
+            self.update_image()
+            return disk_to_remove.value
 
     def add_disk(self, disk_value=0, is_game_initialization=False):
         disk_to_add = TowerLevel(disk_value)
@@ -130,6 +137,7 @@ class Tower:
             for i in range(self.editable_area_size):
                 self.editable_area[i] = TowerLevel(self.editable_area_size - i)
             self.update_image()
+            self.highest_disk_level = self.editable_area[self.editable_area_size - 1]
         else:
             if disk_to_add.value > self.highest_disk_level.value:
                 print("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
