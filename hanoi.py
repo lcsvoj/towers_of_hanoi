@@ -1,11 +1,11 @@
-import draw_tower as draw
+from draw_tower import TowerLevel
 
 
 class Game:
     def __init__(self):
         self.move_count = 0
         self.difficulty = 0
-
+        
         self.meet_user()
         self.game_explanation()
         self.choose_difficulty()
@@ -13,10 +13,11 @@ class Game:
         # Create and print the towers
         towers = self.start_towers()
         print(self.draw_towers(towers))
+        
+        #TODO
+        #self.get_move()
+        #self.make_a_move()
 
-        # TODO
-        # self.get_move()
-        # self.make_a_move()
 
     def validate_yes_or_no_input(self, answer):
         positive_confirmation_input_accepted = [
@@ -50,14 +51,10 @@ class Game:
 
     def choose_difficulty(self):
         min_level = 1
-        max_level = 3
+        max_level = 3        
         while True:
             try:
-                self.difficulty = int(
-                    input(
-                        f"\nChoose your difficulty level from {min_level} (easier) to {max_level} (harder).\nThis will be the total number of disks in the game. "
-                    )
-                )
+                self.difficulty = int(input(f"\nChoose your difficulty level from {min_level} (easier) to {max_level} (harder).\nThis will be the total number of disks in the game. "))
                 if min_level <= self.difficulty <= max_level:
                     break
                 else:
@@ -65,14 +62,10 @@ class Game:
             except ValueError:
                 print(f"Please enter a number between {min_level} and {max_level}.")
         self.difficulty += 2
-        required_moves = 2**self.difficulty - 1
+        required_moves = 2 ** self.difficulty - 1
 
-        print(
-            f"\nThe required number of moves to complete this level is {required_moves}."
-        )
-        confirmation = input(
-            "If you're ready for this challenge, type 'Yes' and we'll begin.\nIf you want to choose a different level, type anything else. "
-        )
+        print(f"\nThe required number of moves to complete this level is {required_moves}.")
+        confirmation = input("If you're ready for this challenge, type 'Yes' and we'll begin.\nIf you want to choose a different level, type anything else. ")
         if not self.validate_yes_or_no_input(confirmation):
             self.choose_difficulty()
         else:
@@ -80,7 +73,7 @@ class Game:
 
     def start_towers(self):
         self.left_tower = Tower(self.difficulty)
-        self.center_tower = Tower(self.difficulty, self.difficulty)
+        self.center_tower = Tower(self.difficulty)
         self.right_tower = Tower(self.difficulty)
         towers = [self.left_tower, self.center_tower, self.right_tower]
         return towers
@@ -90,43 +83,57 @@ class Game:
         all_towers_lines = []
         for tower in towers:
             all_towers_lines.append(tower.get_image().split("\n"))
-
+        
         # Recompose uniting the 3 towers into a single str
         recomposed_towers = "\n"
-        for i in range(
-            self.center_tower.height + 1
-        ):  # This range corresponds to the disk number + 1, +1 for the tower base
+        for i in range(self.center_tower.editable_area_size + 2):  # This range corresponds to the disk number + 1, +1 for the tower base
             for j in range(len(towers)):
                 recomposed_towers += all_towers_lines[j][i]
             recomposed_towers += "\n"
-
+        
         return recomposed_towers
 
-
 class Tower:
-    def __init__(self, difficulty, number_of_disks_in_tower=0):
-        self.difficulty = difficulty
-        self.height = self.difficulty + 1
-        self.number_of_disks_in_tower = number_of_disks_in_tower
+    
+    def __init__(self, difficulty):
+        self.editable_area = {}
+        self.image = ""
+        self.editable_area_size = difficulty
+        self.create_empty_tower()
+        self.highest_disk_level = self.empty_level
 
-        # Create the tower image
-        self.image = (
-            draw.empty_level + "\n"
-        ) * self.height + draw.base_level  # Empty by default
-        if (
-            self.number_of_disks_in_tower != 0
-        ):  # But adapt according to the passed number of disks
-            self.add_initial_disks()
+    def create_empty_tower(self):
+        self.empty_level = TowerLevel(0)
+        self.tower_base = TowerLevel(is_base=True)
+        
+        self.image = self.empty_level.image + "\n"
+        for i in range(1, self.editable_area_size + 1):
+            self.editable_area[i] = self.empty_level
+            self.image += self.empty_level.image + "\n"
+        self.image += self.tower_base.image
+    
+    def remove_disk(self):
+        if self.highest_disk_level.value == 0:
+            print("There are no disks in this tower, try another one.")
+            return
+        else:
+            disk_to_remove = self.tower_filling[f"level_{self.editable_area_size - 1}"]
+            self.tower_filling[f"level_{self.editable_area_size - 1}"] = TowerLevel()
+            return disk_to_remove
+
+    def add_disk(self, disk_value):
+        disk_to_add = TowerLevel(disk_value)
+        if disk_to_add.value > self.highest_disk_level.value:
+            print("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
+            return
+        else:
+            self.highest_disk_level["value"] = disk_to_add.value
+            self.tower_filling[f"level_{self.editable_area_size - 1}"] = disk_to_add
+            self.highest_disk_level = disk_to_add
 
     def get_image(self):
         return self.image
-
-    def add_initial_disks(self):
-        filled_part = ""
-        for i in range(1, self.number_of_disks_in_tower + 1):
-            filled_part += draw.levels[i] + "\n"
-        self.image = (draw.empty_level + "\n") + filled_part + draw.base_level
-
+    
 
 def main():
     new_game = Game()

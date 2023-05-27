@@ -11,7 +11,7 @@
 """
 
 class TowerLevel:
-    levels = {
+    level_patterns = {
         "disk_0": {"value": 0, "image": "           |           "},
         "disk_1": {"value": 1, "image": "         (o|o)         "},
         "disk_2": {"value": 2, "image": "        (oo|oo)        "}, 
@@ -21,18 +21,17 @@ class TowerLevel:
         "base": {"value": None,"image": "   [[[[[[[[|]]]]]]]]   "},
     }
 
-    def __init__(self, level_disk_value=0, is_base=False):
-        self.level_disk_value = level_disk_value
-        
-        if self.level_disk_value == 0:
+    def __init__(self, value=0, is_base=False):
+        self.value = value
+        if self.value == 0:
           self.is_empty = True
-
         self.is_base = is_base
-        
         if not self.is_base:
-           self.image = self.levels[f"disk_{self.level_disk_value}"]["image"]
+           self.image = self.level_patterns[f"disk_{self.value}"]["image"]
+           self.value = self.level_patterns[f"disk_{self.value}"]["value"]
         else:
-           self.image = self.levels["base"]
+           self.image = self.level_patterns["base"]["image"]
+           self.value = self.level_patterns["base"]["value"]
 
     def __str__(self):
         return self.image
