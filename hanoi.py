@@ -12,6 +12,7 @@ class Game:
 
         # Create and print the towers
         towers = self.start_towers()
+        self.center_tower.add_disk(is_game_initialization=True)
         print(self.draw_towers(towers))
         
         #TODO
@@ -99,37 +100,48 @@ class Tower:
         self.editable_area = {}
         self.image = ""
         self.editable_area_size = difficulty
+        self.empty_level = TowerLevel(0)
+        self.tower_base = TowerLevel(is_base=True)
         self.create_empty_tower()
         self.highest_disk_level = self.empty_level
 
     def create_empty_tower(self):
-        self.empty_level = TowerLevel(0)
-        self.tower_base = TowerLevel(is_base=True)
-        
         self.image = self.empty_level.image + "\n"
-        for i in range(1, self.editable_area_size + 1):
+        for i in range(self.editable_area_size):
             self.editable_area[i] = self.empty_level
             self.image += self.empty_level.image + "\n"
         self.image += self.tower_base.image
     
+    def update_image(self):
+        self.image = self.empty_level.image + "\n"
+        for value in reversed(self.editable_area.values()):
+            self.image += value.image + "\n"
+        self.image += self.tower_base.image
+
     def remove_disk(self):
         if self.highest_disk_level.value == 0:
             print("There are no disks in this tower, try another one.")
             return
         else:
-            disk_to_remove = self.tower_filling[f"level_{self.editable_area_size - 1}"]
-            self.tower_filling[f"level_{self.editable_area_size - 1}"] = TowerLevel()
-            return disk_to_remove
+            disk_to_remove = self.highest_disk_level
+            self.editable_area[self.editable_area_size] = self.empty_level
+            self.update_image()
+            return disk_to_remove.value
 
-    def add_disk(self, disk_value):
+    def add_disk(self, disk_value=0, is_game_initialization=False):
         disk_to_add = TowerLevel(disk_value)
-        if disk_to_add.value > self.highest_disk_level.value:
-            print("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
-            return
+        if is_game_initialization:
+            for i in range(self.editable_area_size):
+                self.editable_area[i] = TowerLevel(self.editable_area_size - i)
+            self.update_image()
         else:
-            self.highest_disk_level["value"] = disk_to_add.value
-            self.tower_filling[f"level_{self.editable_area_size - 1}"] = disk_to_add
-            self.highest_disk_level = disk_to_add
+            if disk_to_add.value > self.highest_disk_level.value:
+                print("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
+                return
+            else:
+                self.editable_area[self.editable_area_size] = disk_to_add
+                self.highest_disk_level = disk_to_add
+                self.update_image()
 
     def get_image(self):
         return self.image
