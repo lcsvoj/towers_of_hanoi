@@ -14,6 +14,9 @@ class Game:
         towers = self.start_towers()
         self.center_tower.add_disk(is_game_initialization=True)
         print(self.draw_towers(towers))
+
+        self.center_tower.remove_disk()
+        print(self.draw_towers(towers))
         
         #TODO
         #self.get_move()
@@ -119,14 +122,7 @@ class Tower:
         self.image += self.tower_base.image
 
     def remove_disk(self):
-        if self.highest_disk_level.value == 0:
-            print("There are no disks in this tower, try another one.")
-            return
-        else:
-            disk_to_remove = self.highest_disk_level
-            self.editable_area[self.editable_area_size] = self.empty_level
-            self.update_image()
-            return disk_to_remove.value
+        ...
 
     def add_disk(self, disk_value=0, is_game_initialization=False):
         disk_to_add = TowerLevel(disk_value)
