@@ -1,4 +1,4 @@
-from tower_classes import TowerLevel, Tower
+from tower_classes import Tower
 
 
 class Game:
@@ -6,60 +6,41 @@ class Game:
         self.move_count = 0
         self.difficulty = 0
         
-        self.meet_user()
+        # Game introduction, and difficulty prompting
         self.game_explanation()
         self.choose_difficulty()
 
         # Create and print the towers
         towers = self.start_towers()
-        self.center_tower.add_disk(is_game_initialization=True)
+        self.center_tower.add_disk(is_game_initialization=True, difficulty=self.difficulty)
         print(self.draw_towers(towers))
 
-        removed = self.center_tower.remove_disk()
-        self.left_tower.add_disk(removed)
-        print(self.draw_towers(towers))
         
-        #TODO
-        #self.get_move()
-        #self.make_a_move()
 
 
-    def validate_yes_or_no_input(self, answer):
-        positive_confirmation_input_accepted = [
-            "Y",
-            "YES",
-            "YEAH",
-            "OK",
-            "ALRIGHT",
-            "SIM",
-            "S",
-            "GO",
-        ]
-        stripped_answer = "".join(c for c in answer if c.isalnum())
-        return stripped_answer.upper() in positive_confirmation_input_accepted
+    def can_continue(self, answer):
+        return answer == ""
 
-    def meet_user(self):
-        name = input("How do you want to be called? ").strip().capitalize()
-        print(f"\nHello, {name}! 😄\nWelcome to @lcsvoj's Tower of Hanoi!")
 
     def game_explanation(self):
-        objective = "Your task is to move the entire stack of disks from the central rod to one of the other two."
-        rules = "You must follow 3 simple rules:\n\t1. Only one disk can be moved at a time.\n\t2. Each move consists of replacing the upper disk from one of the stacks to the top of another or on an empty rod.\n\t3. No disk may be placed on top of a smaller disk."
-        game_mechanism = ""  # TODO
+        objective = "Welcome to @lcsvoj's Towers of Hanoi!\nThe objective is to move all disks from the central rod to one of the other rods."
+        rules = "Rules:\n1. Move only one disk at a time.\n2. Move a disk to the top of another stack or an empty rod.\n3. Never place a disk on top of a smaller disk."
+        game_mechanism = "After each move, the remaining number of moves will be displayed. Use your moves wisely.\n\tGood luck, and don't f*ck it up!"
         introduction_content = [objective, rules, game_mechanism]
 
         for item in introduction_content:
-            confirmation = input(f"\n{item}\n\n[Type 'Y' to continue] ")
-            while not self.validate_yes_or_no_input(confirmation):
-                confirmation = input("[Type 'Y' to continue] ")
+            explanation = input(f"\n{item}\n\n[Press ENTER to continue] ")
+            while not self.can_continue(explanation):
+                explanation = input("[Press ENTER to continue] ")
         print()
+
 
     def choose_difficulty(self):
         min_level = 1
-        max_level = 3        
+        max_level = 3
         while True:
             try:
-                self.difficulty = int(input(f"\nChoose your difficulty level from {min_level} (easier) to {max_level} (harder).\nThis will be the total number of disks in the game. "))
+                self.difficulty = int(input(f"\nChoose your difficulty level from {min_level} (easier) to {max_level} (harder). "))
                 if min_level <= self.difficulty <= max_level:
                     break
                 else:
@@ -69,12 +50,14 @@ class Game:
         self.difficulty += 2
         required_moves = 2 ** self.difficulty - 1
 
-        print(f"\nThe required number of moves to complete this level is {required_moves}.")
-        confirmation = input("If you're ready for this challenge, type 'Yes' and we'll begin.\nIf you want to choose a different level, type anything else. ")
-        if not self.validate_yes_or_no_input(confirmation):
+        print(f"\nIn this level, you'll have {required_moves} moves to reach the goal.")
+        confirmation = input("If you're ready for this challenge, [press ENTER to continue].\nIf you want to choose a different level, type anything else then press Enter. ")
+        if not self.can_continue(confirmation):
             self.choose_difficulty()
         else:
+            print("\nOk, let's begin! Here are the Towers of Hanoi: ")
             return
+
 
     def start_towers(self):
         self.left_tower = Tower(self.difficulty)
@@ -83,19 +66,14 @@ class Game:
         towers = [self.left_tower, self.center_tower, self.right_tower]
         return towers
 
+
     def draw_towers(self, towers):
-        # Decompose each tower str line by line
-        all_towers_lines = []
-        for tower in towers:
-            all_towers_lines.append(tower.get_image().split("\n"))
-        
-        # Recompose uniting the 3 towers into a single str
         recomposed_towers = "\n"
-        for i in range(self.center_tower.editable_area_size + 2):  # This range corresponds to the disk number + 1, +1 for the tower base
-            for j in range(len(towers)):
-                recomposed_towers += all_towers_lines[j][i]
+        for i in reversed(range(1, self.difficulty + 2)):
+            for tower in towers:
+                recomposed_towers += tower.tower_levels[i]["image"]
             recomposed_towers += "\n"
-        
+        recomposed_towers += towers[0].tower_levels[0]["image"] * 3 + "\n"
         return recomposed_towers
  
 

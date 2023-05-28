@@ -4,13 +4,13 @@ class Tower:
         self.tower_levels = {}
         self.tower_image = ""
         self.level_patterns = {
-            "empty":    {"value": 0, "image": "           |           "}, # level 6
-            "disk_1":   {"value": 1, "image": "         (o|o)         "}, # level 5
-            "disk_2":   {"value": 2, "image": "        (oo|oo)        "}, # level 4 
-            "disk_3":   {"value": 3, "image": "       (ooo|ooo)       "}, # level 3
-            "disk_4":   {"value": 4, "image": "      (oooo|oooo)      "}, # level 2
-            "disk_5":   {"value": 5, "image": "     (ooooo|ooooo)     "}, # level 1
-            "base":{"value": "base", "image": "   [[[[[[[[|]]]]]]]]   "}, # level 0
+            "empty":  {"value": 0, "image": "           |           "}, # level 6
+            "disk_1": {"value": 1, "image": "         (o|o)         "}, # level 5
+            "disk_2": {"value": 2, "image": "        (oo|oo)        "}, # level 4 
+            "disk_3": {"value": 3, "image": "       (ooo|ooo)       "}, # level 3
+            "disk_4": {"value": 4, "image": "      (oooo|oooo)      "}, # level 2
+            "disk_5": {"value": 5, "image": "     (ooooo|ooooo)     "}, # level 1
+            "base":{"value": None, "image": "   [[[[[[[[|]]]]]]]]   "}, # level 0
         }
 
         self.create_empty_tower(difficulty)
@@ -32,7 +32,7 @@ class Tower:
         """ Find the key for the highest level containing a disk. Returns None if there are no disks. """
         for key, level in self.tower_levels.items():
             if level["image"] != self.level_patterns["empty"]["image"]:
-                if level["value"] == "base":
+                if level["value"] == None:
                     return None
                 else:
                     return key
