@@ -221,7 +221,6 @@ class Game:
             )
             return False
 
-
 def main():
     new_game = Game()
 
