@@ -71,10 +71,44 @@ class Game:
     def __init__(self):
         self.move_count = 0
         self.total_moves = 0
-        
+        self.difficulty = 0
+
+        # Game introduction, prompt fot difficulty
+        self.game_explanation()
+        self.choose_difficulty()
+
+        # Create and print the initial towers
+        towers = self.start_towers()
+        self.center_tower.add_disk(
+            is_game_initialization=True, difficulty=self.difficulty
+        )
+        print(self.draw_towers(towers))
+
+        # Copy the initial tower design to check in game results
+        self.final_tower_image_objective = self.center_tower.tower_image
+
+        # Game starts
+        while True:
+            # Make moves
+            self.make_move()
+            print(self.draw_towers(towers))
+            # Update and check the moves status
+            if self.is_game_over():
+                break
+
+        # Game ends
+        if (
+            self.left_tower.tower_image == self.final_tower_image_objective
+            or self.right_tower.tower_image == self.final_tower_image_objective
+        ):
+            print("Congratulations, you solved the puzzle!")
+        else:
+            print("Sorry, you're out of moves. But don't give up, try again!")
+        exit(0)
+
     def can_continue(self, answer):
         return answer == ""
-    
+
     def game_explanation(self):
         objective = "Welcome to @lcsvoj's Towers of Hanoi!\nThe objective is to move all disks from the central rod to one of the other rods."
         rules = "Rules:\n1. Move only one disk at a time.\n2. Move a disk to the top of another stack or an empty rod.\n3. Never place a disk on top of a smaller disk."
@@ -92,19 +126,19 @@ class Game:
         max_level = 3
         while True:
             try:
-                difficulty = int(
+                self.difficulty = int(
                     input(
                         f"Choose your difficulty level from {min_level} (easier) to {max_level} (harder). "
                     )
                 )
-                if min_level <= difficulty <= max_level:
+                if min_level <= self.difficulty <= max_level:
                     break
                 else:
                     print(f"Please enter a number between {min_level} and {max_level}.")
             except ValueError:
                 print(f"Please enter a number between {min_level} and {max_level}.")
-        number_of_disks = difficulty + 2 # Number of disks
-        self.total_moves = 2**number_of_disks - 1
+        self.difficulty += 2
+        self.total_moves = 2**self.difficulty - 1
 
         print(
             f"\nIn this level, you'll have {self.total_moves} moves to reach the goal."
@@ -116,21 +150,22 @@ class Game:
             self.choose_difficulty()
         else:
             print("\nOk, let's begin! Here are the Towers of Hanoi: ")
-            return number_of_disks
-        
-    def start_towers(self, number_of_disks):
-        self.left_tower = Tower(number_of_disks)
-        self.center_tower = Tower(number_of_disks)
-        self.right_tower = Tower(number_of_disks)
-        self.towers = [self.left_tower, self.center_tower, self.right_tower]
+            return
 
-    def draw_towers(self, number_of_disks):
+    def start_towers(self):
+        self.left_tower = Tower(self.difficulty)
+        self.center_tower = Tower(self.difficulty)
+        self.right_tower = Tower(self.difficulty)
+        towers = [self.left_tower, self.center_tower, self.right_tower]
+        return towers
+
+    def draw_towers(self, towers):
         recomposed_towers = "\n"
-        for i in reversed(range(1, number_of_disks + 2)):
-            for tower in self.towers:
+        for i in reversed(range(1, self.difficulty + 2)):
+            for tower in towers:
                 recomposed_towers += tower.tower_levels[i]["image"]
             recomposed_towers += "\n"
-        recomposed_towers += self.towers[0].tower_levels[0]["image"] * 3 + "\n"
+        recomposed_towers += towers[0].tower_levels[0]["image"] * 3 + "\n"
         recomposed_towers += (
             "\n"
             + "        Tower A        "
@@ -139,17 +174,6 @@ class Game:
             + "\n"
         )
         return recomposed_towers
-    
-    def setup_game(self, number_of_disks):
-        # Create and print the initial towers
-        self.start_towers(number_of_disks)
-        self.center_tower.add_disk(
-            is_game_initialization=True, difficulty=number_of_disks
-        )
-        print(self.draw_towers(number_of_disks))
-
-        # Copy the initial tower design to check in game results
-        self.final_tower_image_objective = self.center_tower.tower_image
 
     def make_move(self):
         tower_options = {
@@ -199,39 +223,7 @@ class Game:
 
 
 def main():
-    new_game, number_of_disks = start_game()
-    play_game(new_game, number_of_disks)
-    end_game(new_game)
-
-
-def start_game():
-    # Game creation, introduction and prompt fot difficulty
-    game = Game()
-    game.game_explanation()
-    number_of_disks = game.choose_difficulty()
-    game.setup_game(number_of_disks)
-    return game, number_of_disks
-
-
-def play_game(game, number_of_disks):
-    while True:
-        # Make moves
-        game.make_move()
-        print(game.draw_towers(number_of_disks))
-        # Update and check the moves status
-        if game.is_game_over():
-            break
-
-
-def end_game(game):
-    if (
-        game.left_tower.tower_image == game.final_tower_image_objective
-        or game.right_tower.tower_image == game.final_tower_image_objective
-    ):
-        print("Congratulations, you solved the puzzle!")
-    else:
-        print("Sorry, you're out of moves. But don't give up, try again!")
-    exit(0)
+    new_game = Game()
 
 
 if __name__ == "__main__":
