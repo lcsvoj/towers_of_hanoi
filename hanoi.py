@@ -4,6 +4,7 @@ from tower_classes import Tower
 class Game:
     def __init__(self):
         self.move_count = 0
+        self.total_moves = 0
         self.difficulty = 0
 
         # Game introduction, and difficulty prompting
@@ -17,10 +18,11 @@ class Game:
         )
         print(self.draw_towers(towers))
 
-        # Make a move
-        self.make_move()
-        print(self.draw_towers(towers))
-        self.update_moves()
+        # Make moves
+        while self.move_count <= self.total_moves:
+            self.make_move()
+            print(self.draw_towers(towers))
+            self.update_moves()
 
 
     def can_continue(self, answer):
@@ -55,9 +57,9 @@ class Game:
             except ValueError:
                 print(f"Please enter a number between {min_level} and {max_level}.")
         self.difficulty += 2
-        required_moves = 2**self.difficulty - 1
+        self.total_moves = 2**self.difficulty - 1
 
-        print(f"\nIn this level, you'll have {required_moves} moves to reach the goal.")
+        print(f"\nIn this level, you'll have {self.total_moves} moves to reach the goal.")
         confirmation = input(
             "If you're ready for this challenge, [press ENTER to continue].\nIf you want to choose a different level, type anything else then press Enter. "
         )
@@ -119,14 +121,16 @@ class Game:
                 to_tower = input("Now select the tower number to place the disk: ")
                 tower_options[to_tower].add_disk(removed_level)
                 break
-            except KeyError as e:
+            except KeyError:
                 print(f"Oops, '{to_tower}' is not a valid tower number!\n")
                 pass
             except ValueError as e:
                 print(e, "\n")
                 pass
 
-    
+    def update_moves(self):
+        self.move_count += 1
+        print(f"Used moves: {self.move_count} out of {self.total_moves}. Let's go to your next move!")
 
 
 def main():
