@@ -28,18 +28,15 @@ class Tower:
         for key in sorted(self.tower_levels.keys(), reverse=True):
             self.tower_image += self.tower_levels[key]["image"] + "\n"
 
-    def get_top_disk_level_key(self):
+    def get_highest_empty_level(self):
         """ Find the key for the highest level containing a disk. Returns None if there are no disks. """
         for key, level in self.tower_levels.items():
             if level["image"] != self.level_patterns["empty"]["image"]:
-                if level["value"] == None:
-                    return None
-                else:
-                    return key
+                return (key + 1)
 
     def remove_disk(self):
         """ Removes disk from a chosen tower, if there are disks to be removed. """
-        target_level_key = self.get_top_disk_level_key()
+        target_level_key = self.get_highest_empty_level() - 1
         if target_level_key == None:
             raise ValueError("There are no disks in this tower, try another one.")
         else:
@@ -55,12 +52,11 @@ class Tower:
             for i in range(1, difficulty + 1):
                 self.tower_levels[i] = self.level_patterns[f"disk_{(difficulty + 1) - i}"]
         else:
-            top_disk_level_key = self.get_top_disk_level_key()
-            if top_disk_level_key == None: # This means the tower is empty
-                self.tower_levels[1] = level_to_add
-            else:
-                if level_to_add["value"] > self.tower_levels[top_disk_level_key]["value"]:
-                    raise ValueError("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
+            highest_empty_level = self.get_highest_empty_level()
+            if level_to_add["value"] > self.tower_levels[highest_empty_level]["value"] and self.tower_levels[highest_empty_level]["value"] != 0:
+                raise ValueError("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
+            else: 
+                self.tower_levels[highest_empty_level] = level_to_add
         self.update_tower_image()
 
     def get_image(self):
