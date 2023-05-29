@@ -41,7 +41,7 @@ class Tower:
         """ Removes disk from a chosen tower, if there are disks to be removed. """
         target_level_key = self.get_top_disk_level_key()
         if target_level_key == None:
-            print("There are no disks in this tower, try another one.")
+            raise ValueError("There are no disks in this tower, try another one.")
             return
         else:
             removed_level = self.tower_levels[target_level_key]
@@ -60,7 +60,7 @@ class Tower:
         else:
             top_disk_level_key = self.tower_levels[self.get_top_disk_level_key()]
             if level_to_add["value"] < self.tower_levels[top_disk_level_key]["value"]:
-                print("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
+                raise ValueError("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
                 return
             else:
                 self.tower_levels[top_disk_level_key] = level_to_add
