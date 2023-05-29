@@ -66,6 +66,7 @@ class Tower:
         """ Returns a string with the current tower image. """
         return "\n" + self.tower_image
 
+
 class Game:
     def __init__(self):
         self.move_count = 0
@@ -219,10 +220,6 @@ class Game:
                 f"Used moves: {self.move_count} out of {self.total_moves}. Let's go to your next move!"
             )
             return False
-
-def game_introduction(game):
-    
-
 
 
 def main():
