@@ -42,7 +42,6 @@ class Tower:
         target_level_key = self.get_top_disk_level_key()
         if target_level_key == None:
             raise ValueError("There are no disks in this tower, try another one.")
-            return
         else:
             removed_level = self.tower_levels[target_level_key]
             self.tower_levels[target_level_key] = self.level_patterns["empty"]
@@ -55,16 +54,14 @@ class Tower:
         if is_game_initialization:
             for i in range(1, difficulty + 1):
                 self.tower_levels[i] = self.level_patterns[f"disk_{(difficulty + 1) - i}"]
-            self.update_tower_image()
-        
         else:
-            top_disk_level_key = self.tower_levels[self.get_top_disk_level_key()]
-            if level_to_add["value"] < self.tower_levels[top_disk_level_key]["value"]:
-                raise ValueError("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
-                return
+            top_disk_level_key = self.get_top_disk_level_key()
+            if top_disk_level_key == None: # This means the tower is empty
+                self.tower_levels[1] = level_to_add
             else:
-                self.tower_levels[top_disk_level_key] = level_to_add
-                self.update_tower_image()
+                if level_to_add["value"] > self.tower_levels[top_disk_level_key]["value"]:
+                    raise ValueError("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
+        self.update_tower_image()
 
     def get_image(self):
         """ Returns a string with the current tower image. """

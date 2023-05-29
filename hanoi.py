@@ -18,7 +18,10 @@ class Game:
         print(self.draw_towers(towers))
 
         # Make a move
-        self.prompt_move(towers)
+        self.make_move()
+        print(self.draw_towers(towers))
+        self.update_moves()
+
 
     def can_continue(self, answer):
         return answer == ""
@@ -78,36 +81,53 @@ class Game:
                 recomposed_towers += tower.tower_levels[i]["image"]
             recomposed_towers += "\n"
         recomposed_towers += towers[0].tower_levels[0]["image"] * 3 + "\n"
-        recomposed_towers += "\n" + "        Tower 1        " + "        Tower 2        " + "        Tower 3        " + "\n"
+        recomposed_towers += (
+            "\n"
+            + "        Tower 1        "
+            + "        Tower 2        "
+            + "        Tower 3        "
+            + "\n"
+        )
         return recomposed_towers
 
-    def prompt_move(self, towers):
+    def make_move(self):
         tower_options = {
             "1": self.left_tower,
-            "Tower 1": self.left_tower,
+            "tower 1": self.left_tower,
             "2": self.center_tower,
-            "Tower 2": self.left_tower,
+            "tower 2": self.center_tower,
             "3": self.right_tower,
-            "Tower 3": self.left_tower,
+            "tower 3": self.right_tower,
         }
-        
+
         from_tower = ""
-        while from_tower.strip().capitalize() not in tower_options.keys():
+        while True:
             try:
-                from_tower = input(
-                    "Select the tower number to remove the top disk: "
-                )
-            except ValueError:
+                from_tower = input("Select the tower number to remove the top disk: ")
+                removed_level = tower_options[from_tower].remove_disk()
+                break
+            except KeyError:
+                print(f"Oops, '{from_tower}' is not a valid tower number!\n")
+                pass
+            except ValueError as e:
+                print(e, "\n")
                 pass
 
         to_tower = ""
-        while to_tower.strip().capitalize() not in tower_options:
+        while True:
             try:
-                to_tower = input(
-                    "Now select the tower number to place the disk: "
-                )
-            except ValueError:
+                to_tower = input("Now select the tower number to place the disk: ")
+                tower_options[to_tower].add_disk(removed_level)
+                break
+            except KeyError as e:
+                print(f"Oops, '{to_tower}' is not a valid tower number!\n")
                 pass
+            except ValueError as e:
+                print(e, "\n")
+                pass
+
+    
+
 
 def main():
     new_game = Game()
