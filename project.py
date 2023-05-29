@@ -3,13 +3,13 @@ class Tower:
         self.tower_levels = {}
         self.tower_image = ""
         self.level_patterns = {
-            "empty": {"value": 0, "image": "           |           "},  # level 6
+            "empty":  {"value": 0, "image": "           |           "},  # level 6
             "disk_1": {"value": 1, "image": "         (-1-)         "},  # level 5
             "disk_2": {"value": 2, "image": "        (--2--)        "},  # level 4
             "disk_3": {"value": 3, "image": "       (---3---)       "},  # level 3
             "disk_4": {"value": 4, "image": "      (----4----)      "},  # level 2
             "disk_5": {"value": 5, "image": "     (-----5-----)     "},  # level 1
-            "base": {"value": None, "image": "    [XXXXXX|XXXXXX]    "},  # level 0
+            "base":{"value": None, "image": "    [XXXXXX|XXXXXX]    "},  # level 0
         }
 
         self.create_empty_tower(difficulty)
@@ -97,9 +97,6 @@ class Game:
         }
         # Copy the initial tower design to check in game results
         self.final_tower_image_objective = self.center_tower.tower_image
-
-    def can_continue(self, answer):
-        return answer == ""
 
     def start_towers(self):
         self.left_tower = Tower(self.difficulty)
