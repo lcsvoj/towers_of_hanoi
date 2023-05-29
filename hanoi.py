@@ -85,31 +85,31 @@ class Game:
         recomposed_towers += towers[0].tower_levels[0]["image"] * 3 + "\n"
         recomposed_towers += (
             "\n"
-            + "        Tower 1        "
-            + "        Tower 2        "
-            + "        Tower 3        "
+            + "        Tower A        "
+            + "        Tower B        "
+            + "        Tower C        "
             + "\n"
         )
         return recomposed_towers
 
     def make_move(self):
         tower_options = {
-            "1": self.left_tower,
-            "tower 1": self.left_tower,
-            "2": self.center_tower,
-            "tower 2": self.center_tower,
-            "3": self.right_tower,
-            "tower 3": self.right_tower,
+            "a": self.left_tower,
+            "tower a": self.left_tower,
+            "b": self.center_tower,
+            "tower b": self.center_tower,
+            "c": self.right_tower,
+            "tower c": self.right_tower,
         }
 
         from_tower = ""
         while True:
             try:
-                from_tower = input("Select the tower number to remove the top disk: ")
-                removed_level = tower_options[from_tower].remove_disk()
+                from_tower = input("Select the tower to remove the top disk: ")
+                removed_level = tower_options[from_tower.lower().strip()].remove_disk()
                 break
             except KeyError:
-                print(f"Oops, '{from_tower}' is not a valid tower number!\n")
+                print(f"Oops, '{from_tower}' is not a valid tower!\n")
                 pass
             except ValueError as e:
                 print(e, "\n")
@@ -118,11 +118,11 @@ class Game:
         to_tower = ""
         while True:
             try:
-                to_tower = input("Now select the tower number to place the disk: ")
-                tower_options[to_tower].add_disk(removed_level)
+                to_tower = input("Now select the tower to place the disk: ")
+                tower_options[to_tower.lower().strip()].add_disk(removed_level)
                 break
             except KeyError:
-                print(f"Oops, '{to_tower}' is not a valid tower number!\n")
+                print(f"Oops, '{to_tower}' is not a valid tower!\n")
                 pass
             except ValueError as e:
                 print(e, "\n")

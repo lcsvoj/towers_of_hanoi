@@ -5,12 +5,12 @@ class Tower:
         self.tower_image = ""
         self.level_patterns = {
             "empty":  {"value": 0, "image": "           |           "}, # level 6
-            "disk_1": {"value": 1, "image": "         (o|o)         "}, # level 5
-            "disk_2": {"value": 2, "image": "        (oo|oo)        "}, # level 4 
-            "disk_3": {"value": 3, "image": "       (ooo|ooo)       "}, # level 3
-            "disk_4": {"value": 4, "image": "      (oooo|oooo)      "}, # level 2
-            "disk_5": {"value": 5, "image": "     (ooooo|ooooo)     "}, # level 1
-            "base":{"value": None, "image": "   [[[[[[[[|]]]]]]]]   "}, # level 0
+            "disk_1": {"value": 1, "image": "         (-1-)         "}, # level 5
+            "disk_2": {"value": 2, "image": "        (--2--)        "}, # level 4 
+            "disk_3": {"value": 3, "image": "       (---3---)       "}, # level 3
+            "disk_4": {"value": 4, "image": "      (----4----)      "}, # level 2
+            "disk_5": {"value": 5, "image": "     (-----5-----)     "}, # level 1
+            "base":{"value": None, "image": "    [XXXXXX|XXXXXX]    "}, # level 0
         }
 
         self.create_empty_tower(difficulty)
@@ -37,7 +37,7 @@ class Tower:
     def remove_disk(self):
         """ Removes disk from a chosen tower, if there are disks to be removed. """
         target_level_key = self.get_highest_empty_level() - 1
-        if target_level_key == None:
+        if self.tower_levels[target_level_key]["value"] == None:
             raise ValueError("There are no disks in this tower, try another one.")
         else:
             removed_level = self.tower_levels[target_level_key]
@@ -52,11 +52,14 @@ class Tower:
             for i in range(1, difficulty + 1):
                 self.tower_levels[i] = self.level_patterns[f"disk_{(difficulty + 1) - i}"]
         else:
-            highest_empty_level = self.get_highest_empty_level()
-            if level_to_add["value"] > self.tower_levels[highest_empty_level]["value"] and self.tower_levels[highest_empty_level]["value"] != 0:
+            highest_empty_level_key = self.get_highest_empty_level()
+            if highest_empty_level_key == 1:   # In other words, the tower is empty
+                self.tower_levels[highest_empty_level_key] = level_to_add
+            elif level_to_add["value"] > self.tower_levels[highest_empty_level_key - 1]["value"]:
                 raise ValueError("Can't do that.\nThe disk you're trying to add is bigger than the disk on top of this tower.")
-            else: 
-                self.tower_levels[highest_empty_level] = level_to_add
+            else:
+                self.tower_levels[highest_empty_level_key] = level_to_add
+
         self.update_tower_image()
 
     def get_image(self):
