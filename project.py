@@ -77,9 +77,10 @@ class Tower:
 
 class Game:
     def __init__(self, difficulty):
-        self.move_count = 0
-        self.total_moves = 2**difficulty - 1
         self.difficulty = difficulty
+        self.total_moves = 2**difficulty - 1
+        self.move_count = 0
+        
         # Create and print the initial towers
         self.towers = self.start_towers()
         self.center_tower.add_disk(
@@ -160,7 +161,7 @@ def welcome(name):
     objective = f"Welcome to @lcsvoj's Towers of Hanoi, {name}!\nThe objective is to move all disks from the central rod to one of the other rods."
     rules = "Rules:\n1. Move only one disk at a time.\n2. Move a disk to the top of another stack or an empty rod.\n3. Never place a disk on top of a smaller disk."
     game_mechanism = "After each move, the remaining number of moves will be displayed. Use your moves wisely.\n\tGood luck!"
-    return objective + rules + game_mechanism
+    return objective + "\n" + rules + "\n" + game_mechanism
 
 
 def get_difficulty(name, difficulty=None):
